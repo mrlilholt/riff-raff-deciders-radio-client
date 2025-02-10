@@ -37,6 +37,7 @@ export default async function handler(req, res) {
       playlistsData[folder] = formatTracks(response.resources, folder);
     }
 
+    console.log("Playlists data fetched successfully:", playlistsData); // Add this log
     res.status(200).json(playlistsData);
   } catch (error) {
     console.error("Error fetching playlists:", error);
