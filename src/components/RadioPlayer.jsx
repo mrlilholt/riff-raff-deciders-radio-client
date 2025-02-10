@@ -52,18 +52,29 @@ const RadioPlayer = () => {
     const fetchPlaylists = async () => {
       try {
         const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
-        const res = await fetch(`https://res.cloudinary.com/${cloudName}/video/list/home_playlists.json`);
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+        // List of playlist subfolders you want to fetch (adjust as necessary)
+        const playlistFolders = ['Driving', 'Hanging out', 'Chill', 'Morning', 'Get Pumped Up', 'Sleepy Time'];
+        let allTracks = [];
+
+        for (const folder of playlistFolders) {
+          // Convert folder name to lowercase and replace spaces with underscores.
+          const folderEndpoint = `music_${folder.toLowerCase().replace(/\s+/g, '_')}.json`;
+          const res = await fetch(`https://res.cloudinary.com/${cloudName}/video/list/${folderEndpoint}`);
+          if (!res.ok) {
+            console.warn(`Could not fetch ${folder} playlist: Status ${res.status}`);
+            continue;
+          }
+          const data = await res.json();
+          const folderTracks = data.resources.map(resource => ({
+            url: resource.secure_url,
+            artist: resource.context?.custom?.artist || "Unknown Artist",
+            title: resource.context?.custom?.title || resource.public_id,
+            playlist: folder
+          }));
+          allTracks = [...allTracks, ...folderTracks];
         }
-        const data = await res.json();
-        const tracks = data.resources.map(resource => ({
-          url: resource.secure_url,
-          artist: resource.context?.custom?.artist || "Unknown Artist",
-          title: resource.context?.custom?.title || resource.public_id,
-          playlist: "Cloudinary Playlist"
-        }));
-        setTracks(tracks);
+
+        setTracks(allTracks);
       } catch (error) {
         console.error('Error fetching playlists:', error);
       }
