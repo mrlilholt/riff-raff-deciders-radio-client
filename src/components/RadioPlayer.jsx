@@ -53,7 +53,7 @@ const RadioPlayer = () => {
       try {
         // Build the Cloudinary URL using an environment variable for your cloud name.
         const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
-        const res = await fetch(`https://res.cloudinary.com/${cloudName}/video/list/playlists.json`);
+        const res = await fetch(`https://res.cloudinary.com/${cloudName}/video/list/home_playlists.json`);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
