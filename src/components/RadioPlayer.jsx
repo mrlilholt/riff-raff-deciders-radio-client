@@ -51,18 +51,15 @@ const RadioPlayer = () => {
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
-        const res = await fetch(`http://localhost:5001/api/cloudinary-playlists`);
+        const res = await fetch(`/api/getPlaylists`);
         if (!res.ok) {
           console.warn(`Could not fetch playlists: Status ${res.status}`);
           return;
         }
         const data = await res.json();
-        const allTracks = data.resources.map(resource => ({
-          url: resource.secure_url,
-          artist: resource.context?.custom?.artist || "Unknown Artist",
-          title: resource.context?.custom?.title || resource.public_id,
-          playlist: resource.context?.custom?.playlist || "Unknown Playlist"
-        }));
+        // data is an object with keys for each folder;
+        // flatten all playlists arrays into a single array
+        const allTracks = Object.values(data).flat();
 
         setTracks(allTracks);
       } catch (error) {
