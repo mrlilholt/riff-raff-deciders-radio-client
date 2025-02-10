@@ -51,12 +51,21 @@ const RadioPlayer = () => {
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
-        const res = await fetch('http://localhost:5001/api/cloudinary/playlists');
+        // Build the Cloudinary URL using an environment variable for your cloud name.
+        const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+        const res = await fetch(`https://res.cloudinary.com/${cloudName}/video/list/playlists.json`);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         const data = await res.json();
-        setTracks(data.tracks);
+        // Cloudinary returns an array of resources.
+        const tracks = data.resources.map(resource => ({
+          url: resource.secure_url,
+          artist: resource.context?.custom?.artist || "Unknown Artist",
+          title: resource.context?.custom?.title || resource.public_id,
+          playlist: "Cloudinary Playlist"
+        }));
+        setTracks(tracks);
       } catch (error) {
         console.error('Error fetching playlists:', error);
       }
