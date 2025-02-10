@@ -56,6 +56,11 @@ const RadioPlayer = () => {
           console.warn(`Could not fetch playlists: Status ${res.status}`);
           return;
         }
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.warn("Received non-JSON response");
+          return;
+        }
         const data = await res.json();
         // data is an object with keys for each folder;
         // flatten all playlists arrays into a single array
