@@ -1,0 +1,9 @@
+# filepath: /Users/alilholt/rrdradio/riff-raff-deciders-radio/client/netlify.toml
+[build]
+  command = "npm run postinstall && npm run build"
+  publish = "build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
